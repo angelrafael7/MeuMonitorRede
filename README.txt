@@ -1,13 +1,13 @@
 MONITOR DE REDE - INSTRUÇÕES DE INSTALAÇÃO
 
 📦 PRÉ-REQUISITOS:
-1. Java JDK 11 ou superior instalado
+1. Java JDK 25 ou superior instalado
    - Verifique: java -version
    - Baixe: https://adoptium.net/
 
 2. JavaFX SDK (opcional, já incluído no JAR)
    - Baixe: https://gluonhq.com/products/javafx/
-   - Extraia para: C:\javafx-sdk-17.0.2
+   - Extraia para: C:\javafx-sdk-25.0.1
 
 🚀 COMO USAR:
 
@@ -39,4 +39,5 @@ OPÇÃO B - EXECUTÁVEL:
 
 ✨ RECOMENDADO:
 Use a OPÇÃO B (build.bat) para criar um executável
+
 que pode ser distribuído para outros computadores.

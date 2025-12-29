@@ -1,0 +1,74 @@
+# build.vscode.ps1
+Write-Host "=== VS CODE BUILD SCRIPT ===" -ForegroundColor Cyan
+
+# Configurações
+$JAVAFX_PATH = "C:\javafx-sdk-25.0.1\lib"
+$SRC_DIR = "src"
+$BIN_DIR = "bin"
+$DIST_DIR = "dist"
+$JAR_NAME = "MonitorRede.jar"
+
+Write-Host "JavaFX Path: $JAVAFX_PATH" -ForegroundColor Gray
+
+# Verificar JavaFX
+if (-not (Test-Path "$JAVAFX_PATH\javafx.base.jar")) {
+    Write-Host "ERRO: JavaFX não encontrado!" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Solução:" -ForegroundColor Yellow
+    Write-Host "1. Baixe: https://download2.gluonhq.com/openjfx/25.0.1/openjfx-25.0.1_windows-x64_bin-sdk.zip"
+    Write-Host "2. Extraia para: C:\javafx-sdk-25.0.1"
+    Write-Host "3. Ou ajuste a variável `$JAVAFX_PATH neste script" -ForegroundColor Cyan
+    pause
+    exit 1
+}
+
+# Limpar
+Write-Host "1. Limpando..." -ForegroundColor Yellow
+Remove-Item -Path $BIN_DIR, $DIST_DIR -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "*.jar" -Force -ErrorAction SilentlyContinue
+New-Item -Path $BIN_DIR, $DIST_DIR -ItemType Directory -Force | Out-Null
+
+# Compilar
+Write-Host "2. Compilando..." -ForegroundColor Yellow
+javac --module-path $JAVAFX_PATH --add-modules javafx.controls,javafx.fxml -d $BIN_DIR -encoding UTF-8 $SRC_DIR/*.java
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "✗ Erro na compilação" -ForegroundColor Red
+    exit 1
+}
+Write-Host "✓ Compilação OK" -ForegroundColor Green
+
+# Criar JAR
+Write-Host "3. Criando JAR..." -ForegroundColor Yellow
+jar cfe "$DIST_DIR/$JAR_NAME" Main -C $BIN_DIR .
+
+if (Test-Path "$DIST_DIR/$JAR_NAME") {
+    $size = (Get-Item "$DIST_DIR/$JAR_NAME").Length
+    Write-Host "✓ JAR criado: $JAR_NAME ($size bytes)" -ForegroundColor Green
+} else {
+    Write-Host "✗ Erro ao criar JAR" -ForegroundColor Red
+    exit 1
+}
+
+# Copiar para raiz (conveniência)
+Copy-Item "$DIST_DIR/$JAR_NAME" -Destination "." -Force
+Write-Host "✓ JAR copiado para raiz do projeto" -ForegroundColor Green
+
+Write-Host ""
+Write-Host "=== BUILD COMPLETO ===" -ForegroundColor Green
+Write-Host ""
+Write-Host "Para executar:" -ForegroundColor Cyan
+Write-Host "  java --module-path '$JAVAFX_PATH' --add-modules javafx.controls,javafx.fxml -jar $JAR_NAME" -ForegroundColor White
+Write-Host ""
+Write-Host "Ou no VS Code:" -ForegroundColor Cyan
+Write-Host "  1. Pressione F5 para depurar" -ForegroundColor White
+Write-Host "  2. Ou Ctrl+Shift+P → Tasks: Run Task → Executar com JavaFX" -ForegroundColor White
+Write-Host ""
+
+# Perguntar se quer executar
+$run = Read-Host "Executar agora? (S/N)"
+if ($run -eq "S" -or $run -eq "s") {
+    Write-Host "Executando..." -ForegroundColor Cyan
+    Write-Host "----------------------------------------" -ForegroundColor Gray
+    java --module-path $JAVAFX_PATH --add-modules javafx.controls,javafx.fxml -jar $JAR_NAME
+}

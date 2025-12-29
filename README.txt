@@ -24,7 +24,7 @@ OPÇÃO B - EXECUTÁVEL:
 🔧 SOLUÇÃO DE PROBLEMAS:
 
 1. Erro "Java not found":
-   - Instale Java JDK 11+
+   - Instale Java JDK 25+
 
 2. Erro "JavaFX modules not found":
    - Baixe e extraia o JavaFX SDK
@@ -41,3 +41,4 @@ OPÇÃO B - EXECUTÁVEL:
 Use a OPÇÃO B (build.bat) para criar um executável
 
 que pode ser distribuído para outros computadores.
+
